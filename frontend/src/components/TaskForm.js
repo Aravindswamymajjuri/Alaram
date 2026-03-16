@@ -1,11 +1,14 @@
 import React, { useState, useContext, useRef, useEffect } from 'react';
 import { TaskContext } from '../context/TaskContext';
+import { AuthContext } from '../context/AuthContext';
 import { userApi } from '../services/api';
+import { requestFCMToken } from '../firebase/firebase';
 import { getSystemTimezone, getTimezoneOffset } from '../utils/dateFormatter';
 import '../styles/components.css';
 
 export const TaskForm = ({ onSuccess }) => {
   const { createTask, loading } = useContext(TaskContext);
+  const { updateFCMToken } = useContext(AuthContext);
   const dropdownRef = useRef(null);
   const [formData, setFormData] = useState({
     title: '',
@@ -140,6 +143,18 @@ export const TaskForm = ({ onSuccess }) => {
         assignedUsers: formData.assignedUsers?.map((u) => u.userId) || [],
         timezoneOffset: timezoneOffset,
       });
+
+      // Refresh FCM token after task creation to ensure notifications work
+      try {
+        const fcmToken = await requestFCMToken();
+        if (fcmToken && updateFCMToken) {
+          await updateFCMToken(fcmToken, 'Web Browser - Task Created');
+          console.log('✓ FCM token refreshed after task creation');
+        }
+      } catch (fcmErr) {
+        console.warn('Failed to refresh FCM token after task creation:', fcmErr.message);
+      }
+
       onSuccess();
     } catch (err) {
       setError(err.message);

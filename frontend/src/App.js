@@ -130,6 +130,29 @@ function AppContent() {
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user?.id, updateFCMToken, user]);
 
+  // Refresh FCM token when user returns to the app tab (Page Visibility API)
+  useEffect(() => {
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'visible' && user && updateFCMToken) {
+        console.log('📱 User returned to app tab, refreshing FCM token...');
+        try {
+          const newToken = await requestFCMToken();
+          if (newToken) {
+            await updateFCMToken(newToken, 'Web Browser - Tab Visible');
+            console.log('✓ FCM token refreshed on tab visibility');
+          }
+        } catch (err) {
+          console.warn('Failed to refresh FCM token on visibility change:', err.message);
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [user, updateFCMToken]);
+
   if (loading) {
     return <div style={{ textAlign: 'center', padding: '50px' }}>Loading...</div>;
   }

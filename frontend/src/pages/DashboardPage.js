@@ -5,12 +5,13 @@ import { TaskForm } from '../components/TaskForm';
 import { TaskList } from '../components/TaskList';
 import { NotificationPanel } from '../components/NotificationPanel';
 import { connectSocket, onTaskCompleted, onNotificationReceived, onAlarmRinging, disconnectSocket } from '../services/socket';
+import { requestFCMToken } from '../firebase/firebase';
 import alarmSoundService from '../services/alarmSound';
 import '../styles/dashboard.css';
 
 export const DashboardPage = () => {
   const { tasks, getTasks, loading } = useContext(TaskContext);
-  const { user } = useContext(AuthContext);
+  const { user, updateFCMToken } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('pending');
   const [showForm, setShowForm] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -21,6 +22,21 @@ export const DashboardPage = () => {
   useEffect(() => {
     if (user) {
       getTasks(activeTab, true); // Force refresh on tab change
+      
+      // Refresh FCM token when dashboard loads (in case user was assigned a task)
+      const refreshFCMTokenOnDashboardLoad = async () => {
+        try {
+          const fcmToken = await requestFCMToken();
+          if (fcmToken && updateFCMToken) {
+            await updateFCMToken(fcmToken, 'Web Browser - Dashboard Load');
+            console.log('✓ FCM token refreshed on dashboard load');
+          }
+        } catch (err) {
+          console.warn('Failed to refresh FCM token on dashboard load:', err.message);
+        }
+      };
+
+      refreshFCMTokenOnDashboardLoad();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, activeTab]);
