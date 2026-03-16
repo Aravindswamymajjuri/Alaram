@@ -34,6 +34,8 @@ export const requestFCMToken = async () => {
         vapidKey: process.env.REACT_APP_FIREBASE_VAPID_KEY,
       });
       console.log('✓ FCM Token obtained');
+      // Store token in localStorage for diagnostics
+      localStorage.setItem('fcmToken', token);
       return token;
     }
 
@@ -45,6 +47,8 @@ export const requestFCMToken = async () => {
         vapidKey: process.env.REACT_APP_FIREBASE_VAPID_KEY,
       });
       console.log('✓ FCM Token obtained');
+      // Store token in localStorage for diagnostics
+      localStorage.setItem('fcmToken', token);
       return token;
     } else {
       console.warn('Notification permission denied by user');
