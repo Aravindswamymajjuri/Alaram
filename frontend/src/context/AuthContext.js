@@ -1,5 +1,6 @@
 import React, { createContext, useState, useCallback, useEffect } from 'react';
 import { authApi } from '../services/api';
+import { requestFCMToken } from '../firebase/firebase';
 
 export const AuthContext = createContext();
 
@@ -18,6 +19,20 @@ export const AuthProvider = ({ children }) => {
           const response = await authApi.getProfile();
           setUser(response.data.user);
           setToken(storedToken);
+          
+          // Try to request FCM token on session restore
+          const fcmToken = await requestFCMToken();
+          if (fcmToken) {
+            try {
+              await authApi.updateFCMToken({
+                fcmToken,
+                deviceName: `Web - ${navigator.userAgent.substring(0, 50)}`,
+              });
+              console.log('📱 FCM token updated on session restore');
+            } catch (fcmErr) {
+              console.warn('Failed to update FCM token:', fcmErr.message);
+            }
+          }
         } catch (err) {
           console.error('Failed to restore session:', err);
           // Clear invalid token
@@ -45,6 +60,21 @@ export const AuthProvider = ({ children }) => {
       setUser(response.data.user);
       setToken(response.data.token);
       localStorage.setItem('token', response.data.token);
+      
+      // Request and send FCM token after successful registration
+      const fcmToken = await requestFCMToken();
+      if (fcmToken) {
+        try {
+          await authApi.updateFCMToken({
+            fcmToken,
+            deviceName: `Web - ${navigator.userAgent.substring(0, 50)}`,
+          });
+          console.log('📱 FCM token registered successfully');
+        } catch (fcmErr) {
+          console.warn('Failed to update FCM token:', fcmErr.message);
+        }
+      }
+      
       return response.data;
     } catch (err) {
       const message = err.response?.data?.message || 'Registration failed';
@@ -63,6 +93,21 @@ export const AuthProvider = ({ children }) => {
       setUser(response.data.user);
       setToken(response.data.token);
       localStorage.setItem('token', response.data.token);
+      
+      // Request and send FCM token after successful login
+      const fcmToken = await requestFCMToken();
+      if (fcmToken) {
+        try {
+          await authApi.updateFCMToken({
+            fcmToken,
+            deviceName: `Web - ${navigator.userAgent.substring(0, 50)}`,
+          });
+          console.log('📱 FCM token registered successfully');
+        } catch (fcmErr) {
+          console.warn('Failed to update FCM token:', fcmErr.message);
+        }
+      }
+      
       return response.data;
     } catch (err) {
       const message = err.response?.data?.message || 'Login failed';

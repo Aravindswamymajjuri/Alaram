@@ -27,39 +27,43 @@ class UserService {
         throw new Error('Invalid FCM token format');
       }
 
-      const user = await User.findById(userId);
+      // Step 1: Remove old token if it exists (avoid duplicates)
+      await User.updateOne(
+        { _id: userId },
+        { $pull: { fcmTokens: { token: fcmToken } } }
+      );
+
+      // Step 2: Add new token and update metadata using findByIdAndUpdate
+      const user = await User.findByIdAndUpdate(
+        userId,
+        {
+          $set: {
+            fcmToken: fcmToken,
+            fcmTokenMetadata: {
+              status: 'verified',
+              lastValidation: new Date(),
+              deviceInfo: deviceInfo,
+            },
+          },
+          $push: {
+            fcmTokens: {
+              $each: [{
+                token: fcmToken,
+                deviceName,
+                isValid: true,
+                createdAt: new Date(),
+                lastUsed: new Date(),
+              }],
+              $slice: -10, // Keep only last 10 tokens
+            },
+          },
+        },
+        { new: true, runValidators: true }
+      );
+
       if (!user) {
         throw new Error('User not found');
       }
-
-      // Update primary token
-      user.fcmToken = fcmToken;
-
-      // Update metadata
-      user.fcmTokenMetadata = {
-        status: 'verified',
-        lastValidation: new Date(),
-        deviceInfo: deviceInfo,
-      };
-
-      // Remove duplicate token from array if exists
-      user.fcmTokens = user.fcmTokens.filter((t) => t.token !== fcmToken);
-
-      // Add new token entry
-      user.fcmTokens.push({
-        token: fcmToken,
-        deviceName,
-        isValid: true,
-        createdAt: new Date(),
-        lastUsed: new Date(),
-      });
-
-      // Keep only last 10 tokens (for multi-device support)
-      if (user.fcmTokens.length > 10) {
-        user.fcmTokens = user.fcmTokens.slice(-10);
-      }
-
-      await user.save();
 
       console.log(`✅ FCM token updated for user ${userId}:`, {
         preview: fcmToken.substring(0, 30) + '...',

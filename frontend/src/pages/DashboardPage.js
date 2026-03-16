@@ -4,7 +4,8 @@ import { AuthContext } from '../context/AuthContext';
 import { TaskForm } from '../components/TaskForm';
 import { TaskList } from '../components/TaskList';
 import { NotificationPanel } from '../components/NotificationPanel';
-import { connectSocket, onTaskCompleted, onNotificationReceived, disconnectSocket } from '../services/socket';
+import { connectSocket, onTaskCompleted, onNotificationReceived, onAlarmRinging, disconnectSocket } from '../services/socket';
+import alarmSoundService from '../services/alarmSound';
 import '../styles/dashboard.css';
 
 export const DashboardPage = () => {
@@ -44,8 +45,29 @@ export const DashboardPage = () => {
         setNotifications((prev) => [notification, ...prev]);
       };
 
+      const handleAlarmRinging = (alarmData) => {
+        console.log('🔴 [DASHBOARD] Alarm ringing:', alarmData);
+        
+        // Show notification
+        setNotifications((prev) => [{
+          _id: `alarm-${alarmData.taskId}-${Date.now()}`,
+          taskId: alarmData.taskId,
+          title: alarmData.taskTitle,
+          description: alarmData.taskDescription,
+          type: 'alarm',
+          read: false,
+          createdAt: new Date(),
+        }, ...prev]);
+
+        // Play alarm sound using singleton
+        alarmSoundService.initializeAudio();
+        alarmSoundService.playNotificationSound();
+        console.log('🔊 Alarm sound triggered');
+      };
+
       onTaskCompleted(handleTaskCompleted);
       onNotificationReceived(handleNotification);
+      onAlarmRinging(handleAlarmRinging);
     }
 
     // Cleanup on unmount only

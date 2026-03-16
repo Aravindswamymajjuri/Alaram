@@ -209,11 +209,12 @@ class AlarmScheduler {
             task._id,
             'alarm',
             `🔔 Alarm: ${task.title}`,
-            `Task alarm is ringing!`,
+            task.description || `Task alarm is ringing!`,
             task.createdBy.fcmToken,
             {
               taskId: task._id.toString(),
               taskTitle: task.title,
+              taskDescription: task.description,
             }
           );
 
@@ -253,11 +254,12 @@ class AlarmScheduler {
               task._id,
               'alarm',
               `🔔 Alarm: ${task.title}`,
-              `Start the assigned task now!`,
+              task.description || `Start the assigned task now!`,
               assignedUser.fcmToken,
               {
                 taskId: task._id.toString(),
                 taskTitle: task.title,
+                taskDescription: task.description,
               }
             );
 
@@ -285,6 +287,7 @@ class AlarmScheduler {
             this.io.to(`user:${userId}`).emit('alarm:ringing', {
               taskId: task._id,
               taskTitle: task.title,
+              taskDescription: task.description,
               task: task.title,
               notification,
               createdBy: task.createdBy?.name || 'Unknown',
@@ -318,10 +321,11 @@ class AlarmScheduler {
             const firebaseResponse = await notificationService.sendMulticastNotification(
               fcmTokens,
               `🔔 Alarm: ${task.title}`,
-              `Start the assigned task now!`,
+              task.description || `Start the assigned task now!`,
               {
                 taskId: task._id.toString(),
                 taskTitle: task.title,
+                taskDescription: task.description,
               }
             );
 

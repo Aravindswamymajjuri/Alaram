@@ -23,13 +23,17 @@ messaging.onBackgroundMessage((payload) => {
   console.log('📬 Background message received:', payload);
 
   const notificationTitle = payload.notification?.title || 'Alarm Reminder';
+  const notificationBody = payload.notification?.body || 'You have a new notification';
+  
   const notificationOptions = {
-    body: payload.notification?.body || 'You have a new notification',
+    body: notificationBody,
     icon: '/favicon.ico',
     badge: '/favicon.ico',
     tag: payload.data?.taskId || 'alarm-notification',
     data: payload.data || {},
     requireInteraction: true,
+    // Add sound to the notification
+    sound: '/sounds/notification.mp3',
   };
 
   // Show notification
