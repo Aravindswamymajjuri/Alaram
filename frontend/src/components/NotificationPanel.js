@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { notificationApi } from '../services/api';
 import alarmSoundService from '../services/alarmSound';
-import { onAlarmRinging, onAlarmStopped, emitAlarmStopped, getSocket } from '../services/socket';
-import { formatTimeOnly12Hour, formatAlarmTimeIST12Hour } from '../utils/dateFormatter';
+import { onAlarmRinging, onAlarmStopped, emitAlarmStopped } from '../services/socket';
+import { formatTimeOnly12Hour } from '../utils/dateFormatter';
 import '../styles/components.css';
 
 export const NotificationPanel = ({ notifications: realtimeNotifications }) => {
@@ -144,8 +144,10 @@ export const NotificationPanel = ({ notifications: realtimeNotifications }) => {
       document.removeEventListener('touchend', wakeUpAudio);
       // Listeners are managed by socket module
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (realtimeNotifications?.length > 0) {
       const newNotification = realtimeNotifications[0];

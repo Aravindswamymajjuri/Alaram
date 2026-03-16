@@ -22,6 +22,7 @@ export const DashboardPage = () => {
     if (user) {
       getTasks(activeTab, true); // Force refresh on tab change
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, activeTab]);
 
   // Setup websocket listeners - only once per user
@@ -76,6 +77,7 @@ export const DashboardPage = () => {
       socketInitializedRef.current = false;
       userIdRef.current = null;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?._id]);
 
   const pendingTasks = tasks.filter((t) => t.status === 'pending');

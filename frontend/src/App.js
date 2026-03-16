@@ -116,7 +116,8 @@ function AppContent() {
         }
       }
     };
-  }, [user?.id]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.id, updateFCMToken, user]);
 
   if (loading) {
     return <div style={{ textAlign: 'center', padding: '50px' }}>Loading...</div>;

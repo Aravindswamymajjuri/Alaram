@@ -46,7 +46,6 @@ class AlarmSoundService {
 
     try {
       const now = this.audioContext.currentTime;
-      const duration = 2;
 
       for (let i = 0; i < 3; i++) {
         const startTime = now + i * 1;
