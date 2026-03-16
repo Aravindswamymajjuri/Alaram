@@ -49,21 +49,23 @@ const playAlarmSound = async () => {
 };
 
 // Handle background messages
-messaging.onBackgroundMessage((payload) => {
+function handleBackgroundMessage(payload) {
   console.log('📬 [SERVICE WORKER] Background message received:', payload);
 
   const notificationTitle = payload.notification?.title || 'Alarm Reminder';
   const notificationBody = payload.notification?.body || 'You have a new notification';
   const taskId = payload.data?.taskId || 'alarm-notification';
   
-  // Enhanced notification options for mobile
+  // Enhanced notification options for mobile with high priority
   const notificationOptions = {
     body: notificationBody,
     icon: '/favicon.ico',
     badge: '/favicon.ico',
     tag: taskId,
     data: payload.data || {},
-    requireInteraction: true,  // Keep notification visible until user interacts
+    requireInteraction: true,  // CRITICAL: Keep notification visible until user interacts
+    priority: 'high',  // High priority for mobile notification delivery
+    vibrate: [200, 100, 200],  // Vibration pattern for mobile
     actions: [
       {
         action: 'open',
@@ -95,6 +97,11 @@ messaging.onBackgroundMessage((payload) => {
     });
 
   return notificationPromise;
+}
+
+// Handle background messages
+messaging.onBackgroundMessage((payload) => {
+  return handleBackgroundMessage(payload);
 });
 
 // Handle notification clicks

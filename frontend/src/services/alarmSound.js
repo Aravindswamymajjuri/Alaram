@@ -5,6 +5,7 @@ class AlarmSoundService {
     this.isPlaying = false;
     this.audioContext = null;
     this.oscillators = [];
+    this.isStopping = false;  // Flag to prevent new oscillators after stop
   }
 
   // Initialize audio element
@@ -109,6 +110,9 @@ class AlarmSoundService {
     try {
       console.log(`🔔 PlayAlarm called with type: ${soundType}`);
       
+      // Reset stopping flag so new oscillators can be created
+      this.isStopping = false;
+      
       // Stop any currently playing sound first
       if (this.isPlaying) {
         this.stopAlarm();
@@ -167,6 +171,12 @@ class AlarmSoundService {
   playWithWebAudioLoop(soundType = 'siren') {
     console.log('🔊 [AUDIO] Attempting to play with Web Audio API (looping for 1+ min):', soundType);
     
+    // Prevent oscillators from being created if stop was called
+    if (this.isStopping) {
+      console.log('⏹️ [AUDIO] Stop was called, aborting new oscillators');
+      return false;
+    }
+    
     this.initializeAudioContext();
     if (!this.audioContext) {
       console.error('❌ [AUDIO] AudioContext not available');
@@ -193,6 +203,12 @@ class AlarmSoundService {
       
       // Create multiple cycles of the alarm pattern
       for (let cycle = 0; cycle < loopDuration; cycle += 3) {
+        // Check again inside loop to prevent partial creation
+        if (this.isStopping) {
+          console.log('⏹️ [AUDIO] Stop called during oscillator creation, halting...');
+          break;
+        }
+        
         if (soundType === 'siren') {
           // Generate siren-like sound pattern
           for (let i = 0; i < 2; i++) {
@@ -249,23 +265,50 @@ class AlarmSoundService {
   // Stop alarm sound
   stopAlarm() {
     try {
-      if (this.audioElement && this.isPlaying) {
+      console.log('🛑 [ALARM] Stopping all alarm sounds...');
+      
+      // Set flag to prevent new oscillators from being created
+      this.isStopping = true;
+      
+      // Stop HTML5 audio element
+      if (this.audioElement) {
         this.audioElement.pause();
         this.audioElement.currentTime = 0;
+        console.log('✅ [ALARM] HTML5 audio stopped');
       }
-      // Stop any Web Audio API oscillators
-      this.oscillators.forEach((osc) => {
+      
+      // Stop all Web Audio API oscillators immediately
+      if (this.oscillators && this.oscillators.length > 0) {
+        console.log(`🛑 [ALARM] Stopping ${this.oscillators.length} oscillators...`);
+        this.oscillators.forEach((osc, index) => {
+          try {
+            // Try to stop the oscillator
+            if (osc && typeof osc.stop === 'function') {
+              osc.stop();
+              console.log(`✅ [ALARM] Oscillator ${index} stopped`);
+            }
+          } catch (e) {
+            console.log(`ℹ️ [ALARM] Oscillator ${index} already stopped or error:`, e.message);
+          }
+        });
+        // Clear the oscillators array
+        this.oscillators = [];
+      }
+      
+      // Close audio context if it's running
+      if (this.audioContext && this.audioContext.state !== 'closed') {
         try {
-          osc.stop();
+          // Don't close the context, just pause oscillators
+          console.log('✅ [ALARM] Audio context preserved');
         } catch (e) {
-          // Already stopped
+          console.warn('[ALARM] Error handling audio context:', e);
         }
-      });
-      this.oscillators = [];
+      }
+      
       this.isPlaying = false;
-      console.log('⏹️ Alarm sound stopped');
+      console.log('✅ [ALARM] Alarm completely stopped');
     } catch (error) {
-      console.error('Error stopping alarm sound:', error);
+      console.error('❌ [ALARM] Error stopping alarm sound:', error);
     }
   }
 
