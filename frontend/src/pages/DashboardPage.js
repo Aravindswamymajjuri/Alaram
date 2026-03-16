@@ -17,13 +17,21 @@ export const DashboardPage = () => {
   const [notifications, setNotifications] = useState([]);
   const socketInitializedRef = useRef(false);
   const userIdRef = useRef(null);
+  const fcmRefreshedRef = useRef(false);
 
-  // Load tasks when user is available or tab changes
+  // Load tasks when tab changes
   useEffect(() => {
     if (user) {
       getTasks(activeTab, true); // Force refresh on tab change
-      
-      // Refresh FCM token when dashboard loads (in case user was assigned a task)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
+
+  // Refresh FCM token ONCE when dashboard component mounts with a user
+  useEffect(() => {
+    if (user && !fcmRefreshedRef.current) {
+      fcmRefreshedRef.current = true;
+
       const refreshFCMTokenOnDashboardLoad = async () => {
         try {
           const fcmToken = await requestFCMToken();
@@ -39,7 +47,7 @@ export const DashboardPage = () => {
       refreshFCMTokenOnDashboardLoad();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, activeTab]);
+  }, [user?.id]);
 
   // Setup websocket listeners - only once per user
   useEffect(() => {
