@@ -3,6 +3,7 @@ import { TaskContext } from '../context/TaskContext';
 import { AuthContext } from '../context/AuthContext';
 import { TaskForm } from '../components/TaskForm';
 import { TaskList } from '../components/TaskList';
+import { UserAnalytics } from '../components/UserAnalytics';
 import { NotificationPanel } from '../components/NotificationPanel';
 import { NotificationDiagnostics } from '../components/NotificationDiagnostics';
 import { connectSocket, onTaskCompleted, onNotificationReceived, onAlarmRinging, disconnectSocket } from '../services/socket';
@@ -187,16 +188,37 @@ export const DashboardPage = () => {
               >
                 ✅ Completed ({completedCount})
               </button>
+              <button
+                className={`tab ${activeTab === 'analytics' ? 'active' : ''}`}
+                onClick={() => setActiveTab('analytics')}
+              >
+                📊 Analytics
+              </button>
             </div>
 
-            {loading ? (
+            {loading && activeTab !== 'analytics' ? (
               <div className="loading">Loading tasks...</div>
+            ) : activeTab === 'analytics' ? (
+              <UserAnalytics />
             ) : (
               <TaskList
                 tasks={
                   activeTab === 'pending' ? pendingTasks : completedTasks
                 }
-                onTasksUpdated={() => getTasks(activeTab)}
+                onTasksUpdated={async () => {
+                  console.log('🔄 onTasksUpdated called - refreshing all task data');
+                  try {
+                    // Refresh both pending and completed to update counts
+                    const pending = await getTasks('pending', true);
+                    const completed = await getTasks('completed', true);
+                    setPendingCount(pending?.length || 0);
+                    setCompletedCount(completed?.length || 0);
+                    // Also reload the active tab to show the updated data
+                    console.log('✅ All task data refreshed. Pending:', pending?.length, 'Completed:', completed?.length);
+                  } catch (err) {
+                    console.error('❌ Error refreshing tasks:', err);
+                  }
+                }}
               />
             )}
           </div>

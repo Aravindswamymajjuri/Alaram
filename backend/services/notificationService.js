@@ -542,7 +542,12 @@ class NotificationService {
   async getUserNotifications(userId, limit = 50, skip = 0, excludePastAlarms = true) {
     try {
       const now = new Date();
-      let query = { userId };
+      const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 1 day in milliseconds
+      
+      let query = { 
+        userId,
+        createdAt: { $gte: oneDayAgo } // Only show notifications created in the last 24 hours
+      };
 
       // If excludePastAlarms is true, only show alarms where task's alarmTime >= now
       if (excludePastAlarms) {

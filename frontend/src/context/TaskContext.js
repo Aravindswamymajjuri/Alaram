@@ -60,15 +60,32 @@ export const TaskProvider = ({ children }) => {
     }
   }, []);
 
-  const markComplete = useCallback(async (taskId) => {
+  const markComplete = useCallback(async (taskId, reason = null) => {
     try {
-      const response = await taskApi.markComplete(taskId);
+      console.log('🔵 markComplete called with:', { taskId, reason });
+      const response = await taskApi.markComplete(taskId, reason);
+      console.log('🟢 Full response received:', response);
+      console.log('🟢 Task data:', response.data.task);
+      console.log('🟢 CompletedBy array:', response.data.task.completedBy);
+      console.log('🟢 CompletedBy[0]:', response.data.task.completedBy?.[0]);
+      
+      // CRITICAL: Check if reason is in the response
+      if (response.data.task.completedBy?.[0]?.reason) {
+        console.log('✅ REASON FOUND IN RESPONSE:', response.data.task.completedBy[0].reason);
+      } else {
+        console.log('❌ WARNING: REASON IS MISSING FROM RESPONSE!');
+        console.log('   CompletedBy[0] fields:', Object.keys(response.data.task.completedBy[0]));
+      }
+      
       loadedStatusesRef.current.clear();
-      setTasks((prev) =>
-        prev.map((task) => (task._id === taskId ? response.data.task : task))
-      );
+      setTasks((prev) => {
+        const updated = prev.map((task) => (task._id === taskId ? response.data.task : task));
+        console.log('🟢 Tasks updated in state:', updated.find(t => t._id === taskId));
+        return updated;
+      });
       return response.data.task;
     } catch (err) {
+      console.error('🔴 Error marking task complete:', err);
       setError(err.response?.data?.message || 'Failed to mark task complete');
       throw err;
     }

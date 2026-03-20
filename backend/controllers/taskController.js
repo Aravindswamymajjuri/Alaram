@@ -123,8 +123,18 @@ class TaskController {
     try {
       const taskId = req.params.taskId;
       const userId = req.userId;
+      const { reason } = req.body; // Extract reason from request body
 
-      const task = await taskService.markTaskComplete(taskId, userId);
+      console.log(`🟡 markTaskComplete endpoint hit`);
+      console.log(`   taskId: ${taskId}`);
+      console.log(`   userId: ${userId}`);
+      console.log(`   request.body:`, JSON.stringify(req.body));
+      console.log(`   destructured reason:`, reason);
+      console.log(`   reason type:`, typeof reason);
+
+      const task = await taskService.markTaskComplete(taskId, userId, reason);
+
+      console.log(`🟢 Service returned task`);
 
       // Emit real-time update via Socket.io to creator and assigned users
       if (global.io) {
@@ -150,8 +160,10 @@ class TaskController {
           global.io.to(`user:${creatorId}`).emit('task:completed', completionEvent);
         }
 
-        console.log(`✅ Task completion broadcast to creator and ${task.assignedUsers?.length || 0} assigned users`);
+        console.log(`✅ Task completion broadcast`);
       }
+
+      console.log(`📤 Sending response with task.completedBy:`, task.completedBy);
 
       res.status(200).json({
         success: true,
@@ -159,6 +171,7 @@ class TaskController {
         task,
       });
     } catch (error) {
+      console.error('🔴 Error in markTaskComplete:', error);
       next(error);
     }
   }

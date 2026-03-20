@@ -133,7 +133,7 @@ class TaskService {
     }
   }
 
-  async markTaskComplete(taskId, userId) {
+  async markTaskComplete(taskId, userId, reason = null) {
     try {
       const task = await Task.findById(taskId);
 
@@ -141,14 +141,39 @@ class TaskService {
         throw new Error('Task not found');
       }
 
+      console.log(`📝 Marking task complete - TaskId: ${taskId}, UserId: ${userId}`);
+      console.log(`🔍 Reason received (RAW):`, reason);
+      console.log(`🔍 Reason type:`, typeof reason);
+      console.log(`🔍 Reason length:`, reason ? reason.length : 'null');
+      console.log(`🔍 Reason truthy?:`, !!reason);
+
       // Check if user already completed this task
       const alreadyCompleted = task.completedBy.some((c) => c.userId.toString() === userId.toString());
 
       if (!alreadyCompleted) {
-        task.completedBy.push({
+        const completionData = {
           userId,
           completedAt: new Date(),
-        });
+        };
+
+        console.log(`🔍 Before adding reason - completionData:`, completionData);
+
+        // Only add reason if provided and non-empty
+        if (reason && typeof reason === 'string' && reason.trim().length > 0) {
+          completionData.reason = reason.trim();
+          console.log(`✅ REASON ADDED - completionData now:`, completionData);
+        } else {
+          console.log(`⚠️ REASON NOT ADDED`);
+          console.log(`   - reason truthy? ${!!reason}`);
+          console.log(`   - is string? ${typeof reason === 'string'}`);
+          console.log(`   - trim().length > 0? ${reason && reason.trim().length > 0}`);
+        }
+
+        task.completedBy.push(completionData);
+        console.log(`✅ Pushed to array. completedBy array length:`, task.completedBy.length);
+        console.log(`✅ completedBy[0] before save:`, task.completedBy[0]);
+      } else {
+        console.log('⚠️ User already marked this task as complete');
       }
 
       // Mark task as completed if:
@@ -165,14 +190,26 @@ class TaskService {
         task.status = 'in_progress';
       }
 
+      console.log(`💾 About to save task...`);
       await task.save();
+      console.log(`💾 Task saved. Checking database state...`);
+      console.log(`💾 completedBy[0] after save (raw):`, task.completedBy[0]);
+      
       await task.populate('createdBy', 'name email');
       await task.populate('assignedUsers', 'name email');
       await task.populate('completedBy.userId', 'name email');
 
+      console.log(`✅ After populate - completedBy[0]:`, task.completedBy[0]);
+      console.log(`📤 FINAL - reason field exists?:`, task.completedBy[0]?.reason);
+      console.log(`📤 FINAL TASK BEING RETURNED:`, JSON.stringify({
+        _id: task._id,
+        title: task.title,
+        completedBy: task.completedBy,
+      }, null, 2));
+
       return task;
     } catch (error) {
-      console.error('Error marking task complete:', error);
+      console.error('❌ Error marking task complete:', error);
       throw error;
     }
   }

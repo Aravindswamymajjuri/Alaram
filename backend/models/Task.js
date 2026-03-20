@@ -53,6 +53,12 @@ const taskSchema = new mongoose.Schema(
           ref: 'User',
         },
         completedAt: Date,
+        reason: {
+          type: String,
+          required: false,
+          maxlength: [500, 'Reason cannot be more than 500 characters'],
+          help: 'Reason for completing task late (after 5 mins of scheduled time)',
+        },
       },
     ],
     recurrence: {

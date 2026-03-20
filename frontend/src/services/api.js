@@ -15,8 +15,31 @@ api.interceptors.request.use((config) => {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  
+  // Log outgoing requests
+  if (config.url?.includes('complete')) {
+    console.log(`📡 API Request to ${config.url}:`, {
+      method: config.method,
+      data: config.data,
+    });
+  }
+  
   return config;
 });
+
+// Log responses
+api.interceptors.response.use(
+  (response) => {
+    if (response.config.url?.includes('complete')) {
+      console.log(`✅ API Response from ${response.config.url}:`, response.data);
+    }
+    return response;
+  },
+  (error) => {
+    console.error(`❌ API Error:`, error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
 
 // Authentication API
 export const authApi = {
@@ -33,7 +56,7 @@ export const taskApi = {
   getTasks: (status) => api.get('/tasks', { params: { status } }),
   getTask: (taskId) => api.get(`/tasks/${taskId}`),
   updateTask: (taskId, data) => api.put(`/tasks/${taskId}`, data),
-  markComplete: (taskId) => api.patch(`/tasks/${taskId}/complete`),
+  markComplete: (taskId, reason = null) => api.patch(`/tasks/${taskId}/complete`, { reason }),
   deleteTask: (taskId) => api.delete(`/tasks/${taskId}`),
   searchTasks: (query) => api.get('/tasks/search', { params: { query } }),
 };
@@ -51,6 +74,11 @@ export const notificationApi = {
     api.get('/notifications', { params: { limit, skip, excludePastAlarms } }),
   markAsRead: (notificationId) => api.patch(`/notifications/${notificationId}/read`),
   markAllAsRead: () => api.patch('/notifications/read/all'),
+};
+
+// Analytics API
+export const analyticsApi = {
+  getAnalytics: () => api.get('/analytics'),
 };
 
 export default api;
