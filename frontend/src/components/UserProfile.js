@@ -1,6 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { userApi } from '../services/api';
+import { User, Bell, Check } from './Icons';
 import '../styles/components.css';
 
 export const UserProfile = () => {
@@ -43,7 +44,7 @@ export const UserProfile = () => {
 
     try {
       await updateProfile(formData);
-      setMessage('✓ Profile updated successfully');
+      setMessage('Profile updated successfully');
       setTimeout(() => setMessage(''), 3000);
     } catch (err) {
       setMessage(`Error: ${err.message}`);
@@ -55,7 +56,7 @@ export const UserProfile = () => {
   return (
     <div className="profile-container">
       <div className="profile-card">
-        <h2>👤 My Profile</h2>
+        <h2><User size={20} /> My Profile</h2>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
@@ -80,7 +81,7 @@ export const UserProfile = () => {
           </div>
 
           <div className="form-group">
-            <h3>🔔 Notification Preferences</h3>
+            <h3><Bell size={16} /> Notification Preferences</h3>
 
             <label className="preference-checkbox">
               <input
@@ -120,7 +121,9 @@ export const UserProfile = () => {
           )}
 
           <button type="submit" disabled={loading} className="btn-primary">
-            {loading ? 'Saving...' : '✓ Save Changes'}
+            {loading ? 'Saving...' : <>
+              <Check size={16} /> Save Changes
+            </>}
           </button>
         </form>
       </div>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Smartphone, Bell, AlertTriangle, Check, X } from './Icons';
 
 export const NotificationDiagnostics = () => {
   const [status, setStatus] = useState({
@@ -22,7 +23,7 @@ export const NotificationDiagnostics = () => {
       );
       const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
       const isAndroid = /android/i.test(navigator.userAgent);
-      
+
       // Multiple PWA detection methods
       const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches;
       const isStandaloneNav = window.navigator.standalone === true;
@@ -91,14 +92,20 @@ export const NotificationDiagnostics = () => {
     return '#F26B35';
   };
 
+  const getStatusIcon = (value) => {
+    if (value === 'granted' || value === 'registered' || value === 'stored') return <Check size={12} />;
+    if (value === 'denied' || value === 'error' || value === 'not-registered') return <X size={12} />;
+    return <AlertTriangle size={12} />;
+  };
+
   const getStatusText = (value) => {
-    if (value === 'granted') return '✓ Granted';
-    if (value === 'registered') return '✓ Registered';
-    if (value === 'stored') return '✓ Stored';
-    if (value === 'denied') return '✗ Denied';
-    if (value === 'default') return '? Default (not requested)';
-    if (value === 'not-registered') return '✗ Not Registered';
-    if (value === 'not-stored') return '✗ Not Stored';
+    if (value === 'granted') return 'Granted';
+    if (value === 'registered') return 'Registered';
+    if (value === 'stored') return 'Stored';
+    if (value === 'denied') return 'Denied';
+    if (value === 'default') return 'Default (not requested)';
+    if (value === 'not-registered') return 'Not Registered';
+    if (value === 'not-stored') return 'Not Stored';
     return value;
   };
 
@@ -129,7 +136,7 @@ export const NotificationDiagnostics = () => {
         }}
         title="Toggle notification status"
       >
-        🔔
+        <Bell size={22} />
       </button>
 
       {/* Status Panel - Shows when open */}
@@ -139,14 +146,14 @@ export const NotificationDiagnostics = () => {
           bottom: 20,
           right: 20,
           maxWidth: '320px',
-          backgroundColor: '#EEECEA',
+          backgroundColor: '#FFFFFF',
           border: '1px solid #E5E3DE',
-          borderRadius: '8px',
-          padding: '12px',
-          fontSize: '12px',
-          fontFamily: 'monospace',
+          borderRadius: '16px',
+          padding: '16px',
+          fontSize: '13px',
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
           zIndex: 9999,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
           animation: 'slideIn 0.3s ease',
         }}>
           {/* Close Button */}
@@ -154,82 +161,89 @@ export const NotificationDiagnostics = () => {
             onClick={() => setIsOpen(false)}
             style={{
               position: 'absolute',
-              top: '8px',
-              right: '8px',
-              backgroundColor: 'transparent',
+              top: '12px',
+              right: '12px',
+              backgroundColor: '#F5F4F1',
               border: 'none',
-              fontSize: '20px',
+              width: '28px',
+              height: '28px',
+              borderRadius: '8px',
               cursor: 'pointer',
-              padding: '0',
-              color: '#1C1B18',
-              lineHeight: '1',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#6B6860',
+              transition: 'all 0.2s',
             }}
             title="Close status"
           >
-            ✕
+            <X size={16} />
           </button>
 
-          <div style={{ fontWeight: 'bold', marginBottom: '8px', color: '#1C1B18', paddingRight: '20px' }}>
-            📱 App Status
-          </div>
-          
-          <div style={{ marginBottom: '6px' }}>
-            <span style={{ color: '#9B9890' }}>Device: </span>
-            <span>{status.isAndroid ? 'Android' : status.isIOS ? 'iOS' : 'Unknown'}</span>
+          <div style={{ fontWeight: 700, marginBottom: '12px', color: '#1C1B18', paddingRight: '30px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Smartphone size={18} /> App Status
           </div>
 
-          <div style={{ marginBottom: '6px' }}>
-            <span style={{ color: '#9B9890' }}>Display Mode: </span>
-            <span style={{ color: status.isStandalone ? '#10B981' : '#F26B35', fontWeight: 'bold' }}>
+          <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ color: '#9B9890' }}>Device</span>
+            <span style={{ fontWeight: 600 }}>{status.isAndroid ? 'Android' : status.isIOS ? 'iOS' : 'Unknown'}</span>
+          </div>
+
+          <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ color: '#9B9890' }}>Display Mode</span>
+            <span style={{ color: status.isStandalone ? '#10B981' : '#F26B35', fontWeight: 600 }}>
               {status.displayMode.toUpperCase()}
             </span>
           </div>
 
-          <div style={{ marginBottom: '6px' }}>
-            <span style={{ color: '#9B9890' }}>PWA Mode: </span>
-            <span style={{ color: status.isPWA ? '#10B981' : '#F26B35', fontWeight: 'bold' }}>
-              {status.isPWA ? '✓ YES' : '✗ NO'}
+          <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ color: '#9B9890' }}>PWA Mode</span>
+            <span style={{ color: status.isPWA ? '#10B981' : '#F26B35', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+              {status.isPWA ? <><Check size={14} /> YES</> : <><X size={14} /> NO</>}
             </span>
           </div>
 
-          <hr style={{ margin: '6px 0', borderColor: '#E5E3DE' }} />
+          <hr style={{ margin: '10px 0', border: 'none', borderTop: '1px solid #EEECEA' }} />
 
-          <div style={{ marginBottom: '6px' }}>
-            <span style={{ color: '#9B9890' }}>Service Worker: </span>
-            <span style={{ color: getStatusColor(status.serviceWorker) }}>
-              {getStatusText(status.serviceWorker)}
+          <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ color: '#9B9890' }}>Service Worker</span>
+            <span style={{ color: getStatusColor(status.serviceWorker), fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+              {getStatusIcon(status.serviceWorker)} {getStatusText(status.serviceWorker)}
             </span>
           </div>
 
-          <div style={{ marginBottom: '6px' }}>
-            <span style={{ color: '#9B9890' }}>Notifications: </span>
-            <span style={{ color: getStatusColor(status.notification) }}>
-              {getStatusText(status.notification)}
+          <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ color: '#9B9890' }}>Notifications</span>
+            <span style={{ color: getStatusColor(status.notification), fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+              {getStatusIcon(status.notification)} {getStatusText(status.notification)}
             </span>
           </div>
 
-          <div style={{ marginBottom: '6px' }}>
-            <span style={{ color: '#9B9890' }}>FCM Token: </span>
-            <span style={{ color: getStatusColor(status.fcmToken) }}>
-              {getStatusText(status.fcmToken)}
+          <div style={{ marginBottom: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ color: '#9B9890' }}>FCM Token</span>
+            <span style={{ color: getStatusColor(status.fcmToken), fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+              {getStatusIcon(status.fcmToken)} {getStatusText(status.fcmToken)}
             </span>
           </div>
 
           {status.isIOS && (
-            <div style={{ marginTop: '8px', padding: '8px', backgroundColor: '#FFF3E0', borderRadius: '4px', color: '#F26B35', fontSize: '11px' }}>
-              ⚠️ <strong>iOS:</strong> Background notifications require native app or PWA on home screen.
+            <div style={{ marginTop: '10px', padding: '10px 12px', backgroundColor: '#FFF7ED', borderRadius: '10px', color: '#C2410C', fontSize: '12px', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
+              <AlertTriangle size={14} style={{ flexShrink: 0, marginTop: '1px' }} />
+              <span><strong>iOS:</strong> Background notifications require native app or PWA on home screen.</span>
             </div>
           )}
 
           {status.isMobile && !status.isPWA && status.displayMode === 'browser' && (
-            <div style={{ marginTop: '8px', padding: '8px', backgroundColor: '#E3F2FD', borderRadius: '4px', color: '#1565C0', fontSize: '11px' }}>
-              💡 <strong>Install:</strong> Add to home screen or use "Install" option in menu for PWA mode.
+            <div style={{ marginTop: '10px', padding: '10px 12px', backgroundColor: '#EFF6FF', borderRadius: '10px', color: '#1E40AF', fontSize: '12px', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
+              <Smartphone size={14} style={{ flexShrink: 0, marginTop: '1px' }} />
+              <span><strong>Install:</strong> Add to home screen or use "Install" option in menu for PWA mode.</span>
             </div>
           )}
 
           {status.isPWA && status.notification !== 'granted' && (
-            <div style={{ marginTop: '8px', padding: '8px', backgroundColor: '#FCE4EC', borderRadius: '4px', color: '#C2185B', fontSize: '11px' }}>
-              ⚠️ <strong>Enable notifications</strong> to receive background alarms.
+            <div style={{ marginTop: '10px', padding: '10px 12px', backgroundColor: '#FFF1F2', borderRadius: '10px', color: '#BE123C', fontSize: '12px', display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
+              <AlertTriangle size={14} style={{ flexShrink: 0, marginTop: '1px' }} />
+              <span><strong>Enable notifications</strong> to receive background alarms.</span>
             </div>
           )}
         </div>

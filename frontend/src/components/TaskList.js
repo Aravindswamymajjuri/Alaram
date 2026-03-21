@@ -3,6 +3,7 @@ import { TaskContext } from '../context/TaskContext';
 import { AuthContext } from '../context/AuthContext';
 import { formatAlarmTimeIST12Hour, formatTimeOnly12Hour } from '../utils/dateFormatter';
 import ReasonModal from './ReasonModal';
+import { AlarmClock, AlertTriangle, Folder, Bell, User, Users, CheckCircle, Crown, Check, Eye, Trash2, FileText } from './Icons';
 import '../styles/components.css';
 
 export const TaskList = ({ tasks, onTasksUpdated }) => {
@@ -67,7 +68,7 @@ export const TaskList = ({ tasks, onTasksUpdated }) => {
 
   const handleReasonSubmit = async (reason) => {
     try {
-      console.log('📝 handleReasonSubmit called with reason:', reason);
+      console.log('handleReasonSubmit called with reason:', reason);
       // Pass reason as-is (null, empty string, or actual reason)
       await markComplete(reasonModalData.taskId, reason);
       setReasonModalData(null);
@@ -120,9 +121,9 @@ export const TaskList = ({ tasks, onTasksUpdated }) => {
                 <div className="task-title-section">
                   <h3>{task.title}</h3>
                   <span className={`user-role role-${userRole.toLowerCase()}`}>
-                    {userRole === 'Creator' && '👑 Creator'}
-                    {userRole === 'Assigned' && '✓ Assigned to You'}
-                    {userRole === 'Viewer' && '👁️ Viewer'}
+                    {userRole === 'Creator' && <><Crown size={12} /> Creator</>}
+                    {userRole === 'Assigned' && <><Check size={12} /> Assigned to You</>}
+                    {userRole === 'Viewer' && <><Eye size={12} /> Viewer</>}
                   </span>
                 </div>
                 <span className={`priority priority-${task.priority}`}>
@@ -136,49 +137,49 @@ export const TaskList = ({ tasks, onTasksUpdated }) => {
 
               <div className="task-details">
                 <div className="detail">
-                  <span className="label">⏰ Alarm Time:</span>
+                  <span className="label"><AlarmClock size={14} /> Alarm Time:</span>
                   <span>{formatAlarmTimeIST12Hour(task.alarmTime)}</span>
                 </div>
 
                 {isLate && task.status === 'pending' && (
                   <div className="detail late-warning">
-                    <span className="label">⚠️ Late:</span>
+                    <span className="label"><AlertTriangle size={14} /> Late:</span>
                     <span className="late-text">{getTimeDelayMinutes(task)} minutes past scheduled time</span>
                   </div>
                 )}
 
                 {task.category && (
                   <div className="detail">
-                    <span className="label">📂 Category:</span>
+                    <span className="label"><Folder size={14} /> Category:</span>
                     <span>{task.category}</span>
                   </div>
                 )}
 
                 {task.reminderTimes?.length > 0 && (
                   <div className="detail">
-                    <span className="label">🔔 Reminders:</span>
+                    <span className="label"><Bell size={14} /> Reminders:</span>
                     <span>{task.reminderTimes.join(', ')} min before</span>
                   </div>
                 )}
 
                 <div className="detail">
-                  <span className="label">👤 Created by:</span>
+                  <span className="label"><User size={14} /> Created by:</span>
                   <span>{task.createdBy.name}</span>
                 </div>
 
                 {task.assignedUsers?.length > 0 && (
                   <div className="detail">
-                    <span className="label">👥 Assigned to:</span>
+                    <span className="label"><Users size={14} /> Assigned to:</span>
                     <span>{task.assignedUsers.map((u) => u.name).join(', ')}</span>
                   </div>
                 )}
 
                 {task.completedBy?.length > 0 && (
                   <div className="detail">
-                    <span className="label">✅ Completed by:</span>
+                    <span className="label"><CheckCircle size={14} /> Completed by:</span>
                     <div className="completed-by-list">
                       {task.completedBy.map((completion, index) => {
-                        console.log(`📋 Rendering completion ${index}:`, completion);
+                        console.log(`Rendering completion ${index}:`, completion);
                         return (
                           <div key={index} className="completed-by-item">
                             <span className="completed-user">{completion.userId.name}</span>
@@ -187,7 +188,7 @@ export const TaskList = ({ tasks, onTasksUpdated }) => {
                             </span>
                             {completion.reason && (
                               <span className="completion-reason">
-                                📝 Reason: {completion.reason}
+                                <FileText size={12} /> Reason: {completion.reason}
                               </span>
                             )}
                             {!completion.reason && (
@@ -219,7 +220,7 @@ export const TaskList = ({ tasks, onTasksUpdated }) => {
                         : 'You can mark tasks assigned to you as done'
                     }
                   >
-                    ✓ Mark Done
+                    <Check size={16} /> Mark Done
                     {isAssigned && <span className="assigned-indicator"> (Your Task)</span>}
                     {isLate && isAssigned && <span className="late-indicator"> (Late)</span>}
                   </button>
@@ -231,13 +232,13 @@ export const TaskList = ({ tasks, onTasksUpdated }) => {
                     onClick={() => handleDelete(task._id)}
                     title="Only creator can delete tasks"
                   >
-                    🗑️ Delete
+                    <Trash2 size={16} /> Delete
                   </button>
                 )}
 
                 {!isCreator && !isAssigned && (
                   <div className="task-permission-note">
-                    👁️ View Only - You cannot modify this task
+                    <Eye size={14} /> View Only - You cannot modify this task
                   </div>
                 )}
               </div>
