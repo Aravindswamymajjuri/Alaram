@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { BrandLogo, Eye, EyeOff, AlertTriangle, User, Mail } from '../components/Icons';
 import '../styles/auth.css';
 
 export const RegisterPage = () => {
@@ -103,7 +104,7 @@ export const RegisterPage = () => {
     <div className="auth-container">
       <div className="auth-card">
         <div className="card-header">
-          <div className="card-icon">🔔</div>
+          {/* <div className="card-icon"><BrandLogo size={28} /></div> */}
           <h1>Join us</h1>
           <p className="subtitle">Create your alarm reminder account</p>
         </div>
@@ -131,7 +132,7 @@ export const RegisterPage = () => {
                 autoComplete="name"
                 aria-label="Full name"
               />
-              <span className="form-group-icon">👤</span>
+              <span className="form-group-icon"><User size={18} /></span>
             </div>
           </div>
 
@@ -151,11 +152,11 @@ export const RegisterPage = () => {
                 aria-label="Email address"
                 aria-invalid={emailError ? 'true' : 'false'}
               />
-              <span className="form-group-icon">✉</span>
+              <span className="form-group-icon"><Mail size={18} /></span>
             </div>
             {emailError && (
               <div className="field-error-message" role="alert">
-                <span>⚠</span>
+                <AlertTriangle size={14} />
                 {emailError}
               </div>
             )}
@@ -171,7 +172,7 @@ export const RegisterPage = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                placeholder="••••••••"
+                placeholder="Min. 8 characters"
                 autoComplete="new-password"
                 aria-label="Password (at least 8 characters)"
               />
@@ -182,17 +183,7 @@ export const RegisterPage = () => {
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                 tabIndex="0"
               >
-                {showPassword ? (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                ) : (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                    <line x1="1" y1="1" x2="23" y2="23"></line>
-                  </svg>
-                )}
+                {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
               </button>
             </div>
           </div>
@@ -207,7 +198,7 @@ export const RegisterPage = () => {
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 required
-                placeholder="••••••••"
+                placeholder="Repeat your password"
                 autoComplete="new-password"
                 className={passwordError ? 'field-error' : ''}
                 aria-label="Confirm password"
@@ -220,22 +211,12 @@ export const RegisterPage = () => {
                 aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                 tabIndex="0"
               >
-                {showConfirmPassword ? (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                  </svg>
-                ) : (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                    <line x1="1" y1="1" x2="23" y2="23"></line>
-                  </svg>
-                )}
+                {showConfirmPassword ? <Eye size={18} /> : <EyeOff size={18} />}
               </button>
             </div>
             {passwordError && (
               <div className="field-error-message" role="alert">
-                <span>⚠</span>
+                <AlertTriangle size={14} />
                 {passwordError}
               </div>
             )}

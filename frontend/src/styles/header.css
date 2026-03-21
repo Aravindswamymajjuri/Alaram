@@ -1,246 +1,268 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:wght@400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 .app-header {
-  background-color: #FFFFFF;
-  border-bottom: 0.5px solid #E5E3DE;
-  padding: 14px 24px;
+  background-color: rgba(255, 255, 255, 0.92);
+  border-bottom: 1px solid #E2E8F0;
+  padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky;
   top: 0;
   z-index: 100;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  height: 56px;
+  gap: 12px;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex: 1;
+  gap: 10px;
+  flex-shrink: 0;
 }
 
 .header-logo-icon {
-  width: 36px;
-  height: 36px;
-  background: #F26B35;
-  border-radius: 8px;
+  width: 34px;
+  height: 34px;
+  min-width: 34px;
+  background: linear-gradient(135deg, #6366F1, #4F46E5);
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
   color: white;
-  font-weight: 700;
 }
 
 .app-title {
-  font-family: 'DM Serif Display', serif;
-  font-size: 19px;
-  font-weight: 400;
-  color: #1C1B18;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0F172A;
   margin: 0;
-  letter-spacing: -0.2px;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
 }
 
 .header-center {
   flex: 1;
   display: flex;
   justify-content: center;
+  min-width: 0;
 }
 
 .header-clock {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: #EEECEA;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 12px;
-  color: #1C1B18;
+  gap: 6px;
+  background: #F1F5F9;
+  padding: 6px 12px;
+  border-radius: 100px;
+  font-size: 0.75rem;
+  color: #0F172A;
   font-weight: 600;
-  letter-spacing: 0.3px;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: 0.02em;
+  font-family: 'Inter', monospace;
+  white-space: nowrap;
 }
 
 .header-clock-dot {
   width: 6px;
   height: 6px;
-  background: #22C55E;
+  min-width: 6px;
+  background: #10B981;
   border-radius: 50%;
-  animation: pulse 2s ease-in-out infinite;
+  animation: headerPulse 2s ease-in-out infinite;
 }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
+@keyframes headerPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
 .header-nav {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex: 1;
-  justify-content: flex-end;
+  flex-shrink: 0;
 }
 
 .auth-section {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .auth-section.logged-in {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .user-name {
-  font-size: 13px;
-  color: #1C1B18;
+  font-size: 0.8125rem;
+  color: #334155;
   font-weight: 500;
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
 }
 
 .btn-logout {
-  background: #FFFFFF !important;
-  color: #F26B35 !important;
-  border: 1.5px solid #F26B35 !important;
-  padding: 10px 18px;
-  border-radius: 10px;
+  background: transparent !important;
+  color: #6366F1 !important;
+  border: 1.5px solid #C7D2FE !important;
+  padding: 6px 12px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  transition: all 0.2s ease;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  height: 34px;
 }
 
 .btn-logout:hover {
-  background: #F26B35 !important;
+  background: #6366F1 !important;
   color: white !important;
+  border-color: #6366F1 !important;
 }
 
 .auth-section.logged-out {
   display: flex;
-  gap: 12px;
+  gap: 6px;
 }
 
 .btn-login {
-  background-color: #FFFFFF;
-  color: #1C1B18 !important;
-  padding: 10px 18px;
-  border: 1.5px solid #E5E3DE;
-  border-radius: 10px;
+  background-color: transparent;
+  color: #334155 !important;
+  padding: 6px 12px;
+  border: 1.5px solid #E2E8F0;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  transition: all 0.2s ease;
-  min-width: 70px;
-  text-align: center;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  height: 34px;
 }
 
 .btn-login:hover {
-  background-color: #FAFAF9;
-  border-color: #D9D7D1;
+  background-color: #F1F5F9;
+  border-color: #CBD5E1;
 }
 
 .btn-signup {
-  background-color: #F26B35;
+  background: linear-gradient(135deg, #6366F1, #4F46E5);
   color: white !important;
-  padding: 10px 18px;
+  padding: 6px 12px;
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  transition: all 0.2s ease;
-  min-width: 80px;
-  text-align: center;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  height: 34px;
 }
 
 .btn-signup:hover {
-  background-color: #D95C28;
-  transform: scale(1.015);
-  box-shadow: 0 4px 12px rgba(242, 107, 53, 0.2);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
-.btn-signup:active {
-  transform: scale(0.98);
-}
-
+/* ===== TABLET ===== */
 @media (max-width: 768px) {
   .app-header {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .header-left {
-    order: 1;
-  }
-
-  .header-center {
-    order: 3;
-    flex-basis: 100%;
-    margin-top: 8px;
-  }
-
-  .header-nav {
-    order: 2;
+    padding: 0 12px;
+    height: 50px;
+    gap: 8px;
   }
 
   .app-title {
-    font-size: 16px;
+    display: none;
+  }
+
+  .header-logo-icon {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 8px;
+  }
+
+  .header-clock {
+    padding: 5px 10px;
+    font-size: 0.6875rem;
+    gap: 5px;
+  }
+
+  .user-name {
+    display: none;
+  }
+
+  /* Icon-only buttons on mobile */
+  .btn-login .btn-text,
+  .btn-logout .btn-text,
+  .btn-signup .btn-text {
+    display: none;
   }
 
   .btn-login,
   .btn-logout,
   .btn-signup {
-    padding: 8px 14px;
-    font-size: 12px;
+    padding: 0;
+    width: 34px;
+    height: 34px;
+    justify-content: center;
+    gap: 0;
+    border-radius: 8px;
+    flex-shrink: 0;
   }
 }
 
-.btn-signup:hover {
-  background-color: #f0f0f0;
-  transform: translateY(-2px);
-}
-
-.btn-logout {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 2px solid white;
-}
-
-.btn-logout:hover {
-  background-color: #ff6b6b;
-  border-color: #ff6b6b;
-  transform: translateY(-2px);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .header-container {
-    flex-direction: column;
-    gap: 1rem;
+/* ===== SMALL PHONE ===== */
+@media (max-width: 400px) {
+  .app-header {
+    padding: 0 8px;
+    height: 46px;
+    gap: 6px;
   }
 
-  .app-title {
-    font-size: 1.2rem;
+  .header-logo-icon {
+    width: 30px;
+    height: 30px;
+    min-width: 30px;
+  }
+
+  .header-clock {
+    padding: 4px 8px;
+    font-size: 0.625rem;
+    gap: 4px;
+  }
+
+  .header-clock-dot {
+    width: 5px;
+    height: 5px;
+    min-width: 5px;
   }
 
   .btn-login,
-  .btn-signup,
-  .btn-logout {
-    padding: 0.5rem 1rem;
-    font-size: 0.85rem;
-  }
-
-  .user-name {
-    font-size: 0.85rem;
+  .btn-logout,
+  .btn-signup {
+    width: 30px;
+    height: 30px;
   }
 }

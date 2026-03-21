@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Timer, AlertTriangle, CheckCircle, X } from './Icons';
 import '../styles/reasonModal.css';
 
 export const ReasonModal = ({ taskTitle, timeDelayMinutes, onSubmit, onCancel, isLate = false }) => {
@@ -18,7 +19,7 @@ export const ReasonModal = ({ taskTitle, timeDelayMinutes, onSubmit, onCancel, i
     try {
       // Send reason as a non-empty string or null
       const reasonToSend = reason && reason.trim().length > 0 ? reason.trim() : null;
-      console.log('📤 Submitting reason:', reasonToSend);
+      console.log('Submitting reason:', reasonToSend);
       await onSubmit(reasonToSend);
     } finally {
       setIsSubmitting(false);
@@ -29,26 +30,28 @@ export const ReasonModal = ({ taskTitle, timeDelayMinutes, onSubmit, onCancel, i
     <div className="reason-modal-overlay">
       <div className="reason-modal">
         <div className="modal-header">
-          <h2>⏱️ Task Completion Delayed</h2>
-          <button className="modal-close" onClick={onCancel}>✕</button>
+          <h2><Timer size={22} /> Task Completion</h2>
+          <button className="modal-close" onClick={onCancel}><X size={20} /></button>
         </div>
 
         <div className="modal-body">
-          <div className="delay-info">
+          <div className={`delay-info ${isLate ? 'delay-late' : 'delay-ontime'}`}>
             <p className="task-title">
               <strong>{taskTitle}</strong>
             </p>
             {isLate ? (
               <p className="delay-message">
-                ⚠️ This task was not completed within <strong>5 minutes</strong> of the scheduled time.
+                <AlertTriangle size={16} className="delay-icon" />
+                This task was not completed within <strong>5 minutes</strong> of the scheduled time.
                 <br />
                 <span className="delay-time">({timeDelayMinutes} minutes late)</span>
               </p>
             ) : (
               <p className="delay-message">
-                ✅ You're marking this task as complete on time.
+                <CheckCircle size={16} className="delay-icon" />
+                You're marking this task as complete on time.
                 <br />
-                <span className="delay-time">(Optional: Add notes about the completion)</span>
+                <span className="delay-time ontime">(Optional: Add notes about the completion)</span>
               </p>
             )}
           </div>

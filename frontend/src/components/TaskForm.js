@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import { userApi } from '../services/api';
 import { requestFCMToken } from '../firebase/firebase';
 import { getSystemTimezone, getTimezoneOffset } from '../utils/dateFormatter';
+import { Globe, X } from './Icons';
 import '../styles/components.css';
 
 export const TaskForm = ({ onSuccess }) => {
@@ -135,7 +136,7 @@ export const TaskForm = ({ onSuccess }) => {
     try {
       // Capture timezone offset (in minutes)
       const timezoneOffset = new Date().getTimezoneOffset();
-      
+
       // Send datetime-local value as-is (e.g., "2026-03-16T13:53")
       // Backend will parse this as local time and convert to UTC for storage
       await createTask({
@@ -201,8 +202,9 @@ export const TaskForm = ({ onSuccess }) => {
               onChange={handleChange}
               required
             />
-            <small style={{ display: 'block', marginTop: '0.3rem', color: '#9B9890', fontSize: '0.85rem' }}>
-              🌍 Your timezone: <strong>{getSystemTimezone()}</strong> ({getTimezoneOffset()})
+            <small className="timezone-hint">
+              <Globe size={14} />
+              <span>Your timezone: <strong>{getSystemTimezone()}</strong> ({getTimezoneOffset()})</span>
             </small>
           </div>
 
@@ -214,9 +216,9 @@ export const TaskForm = ({ onSuccess }) => {
               value={formData.priority}
               onChange={handleChange}
             >
-              <option value="low">🔵 Low</option>
-              <option value="medium">🟡 Medium</option>
-              <option value="high">🔴 High</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
             </select>
           </div>
         </div>
@@ -310,7 +312,7 @@ export const TaskForm = ({ onSuccess }) => {
                     onClick={() => removeUserFromTask(user.userId)}
                     title="Remove user"
                   >
-                    ×
+                    <X size={14} />
                   </button>
                 </div>
               ))}

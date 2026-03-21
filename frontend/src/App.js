@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthContext, AuthProvider } from './context/AuthContext';
 import { TaskProvider } from './context/TaskContext';
@@ -15,7 +15,7 @@ function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useContext(AuthContext);
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '50px' }}>Loading...</div>;
+    return <div style={{ textAlign: 'center', padding: '60px', color: '#94A3B8', fontFamily: "'Inter', sans-serif", fontSize: '0.9375rem' }}>Loading...</div>;
   }
 
   return isAuthenticated ? children : <Navigate to="/login" />;
@@ -26,6 +26,7 @@ function AppContent() {
   const notificationsInitializedRef = useRef(false);
   const fcmRefreshIntervalRef = useRef(null);
   const deferredPromptRef = useRef(null);
+  const [notificationSlot, setNotificationSlot] = useState(null);
 
   // Setup PWA installation prompt
   useEffect(() => {
@@ -208,12 +209,12 @@ function AppContent() {
   }, [user, updateFCMToken]);
 
   if (loading) {
-    return <div style={{ textAlign: 'center', padding: '50px' }}>Loading...</div>;
+    return <div style={{ textAlign: 'center', padding: '60px', color: '#94A3B8', fontFamily: "'Inter', sans-serif", fontSize: '0.9375rem' }}>Loading...</div>;
   }
 
   return (
     <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-      <Header />
+      <Header notificationSlot={notificationSlot} />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
@@ -222,7 +223,7 @@ function AppContent() {
           element={
             <ProtectedRoute>
               <TaskProvider>
-                <DashboardPage />
+                <DashboardPage setNotificationSlot={setNotificationSlot} />
               </TaskProvider>
             </ProtectedRoute>
           }

@@ -1,19 +1,18 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { BrandLogo, LogOut, LogIn, UserPlus } from './Icons';
 import '../styles/header.css';
 
-export const Header = () => {
+export const Header = ({ notificationSlot }) => {
   const navigate = useNavigate();
   const { user, logout, isAuthenticated } = useContext(AuthContext);
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
-    // Update time every second
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
-
     return () => clearInterval(timer);
   }, []);
 
@@ -28,18 +27,17 @@ export const Header = () => {
     const seconds = String(date.getSeconds()).padStart(2, '0');
     const ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12;
-    hours = hours ? hours : 12; // Convert 0 to 12
+    hours = hours ? hours : 12;
     const hoursStr = String(hours).padStart(2, '0');
     return `${hoursStr}:${minutes}:${seconds} ${ampm}`;
   };
 
-  // Show header on all pages including auth pages
-  // (removed the conditional hiding)
-
   return (
     <header className="app-header">
       <div className="header-left">
-        <div className="header-logo-icon">🔔</div>
+        <div className="header-logo-icon">
+          <BrandLogo size={22} />
+        </div>
         <h1 className="app-title">Alarm Reminder</h1>
       </div>
 
@@ -53,9 +51,11 @@ export const Header = () => {
       <nav className="header-nav">
         {isAuthenticated ? (
           <div className="auth-section logged-in">
-            <span className="user-name">Welcome, {user?.name}</span>
-            <button className="btn-logout" onClick={handleLogout}>
-              Logout
+            <span className="user-name">{user?.name}</span>
+            {notificationSlot}
+            <button className="btn-logout" onClick={handleLogout} title="Logout">
+              <LogOut size={15} />
+              <span className="btn-text">Logout</span>
             </button>
           </div>
         ) : (
@@ -64,15 +64,19 @@ export const Header = () => {
               className="btn-login"
               onClick={() => navigate('/login')}
               aria-label="Go to login page"
+              title="Login"
             >
-              Login
+              <LogIn size={15} />
+              <span className="btn-text">Login</span>
             </button>
             <button
               className="btn-signup"
               onClick={() => navigate('/register')}
               aria-label="Go to sign up page"
+              title="Sign Up"
             >
-              Sign Up
+              <UserPlus size={15} />
+              <span className="btn-text">Sign Up</span>
             </button>
           </div>
         )}

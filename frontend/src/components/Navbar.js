@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { Bell } from './Icons';
 import '../styles/navbar.css';
 
 export const Navbar = ({ isAuthenticated, onLogout }) => {
@@ -28,7 +29,7 @@ export const Navbar = ({ isAuthenticated, onLogout }) => {
   return (
     <nav className="navbar">
       <div className="navbar-left">
-        <div className="navbar-logo-icon">🔔</div>
+        <div className="navbar-logo-icon"><Bell size={18} /></div>
         <div className="navbar-brand">Alarm Reminder</div>
       </div>
 
